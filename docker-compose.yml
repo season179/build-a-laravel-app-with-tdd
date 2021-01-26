@@ -3,6 +3,10 @@ version: "3"
 networks:
   laravel:
 
+volumes:
+  dbdata:
+    driver: local
+
 services:
   web:
     build:
@@ -15,20 +19,20 @@ services:
       - ./src:/var/www/html:delegated
     depends_on:
       - php
-      - mysql
+      - db
     networks:
       - laravel
 
-  mysql:
+  db:
     image: mysql:5.7.33
-    container_name: mysql
+    container_name: db
     restart: unless-stopped
     tty: true
     ports:
       - 3306:3306
     environment:
       MYSQL_DATABASE: birdboard
-      MYSQL_USER: birdboard
+      MYSQL_USER: laraveluser
       MYSQL_PASSWORD: secret
       MYSQL_ROOT_PASSWORD: secret
       SERVICE_TAGS: dev
@@ -36,7 +40,8 @@ services:
     networks:
       - laravel
     volumes:
-      - ./mysql:/var/lib/mysql
+      - dbdata:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
 
   php:
     build:
