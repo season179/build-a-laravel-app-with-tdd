@@ -30,7 +30,7 @@ class ProjectsController extends Controller
         ]);
 
         // persist
-        Project::create($attributes);
+        auth()->user()->projects()->create($attributes);
 
         // redirect
         return redirect('/projects');
